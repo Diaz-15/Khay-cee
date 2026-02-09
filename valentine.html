@@ -1,58 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Day Celebration</title>
-    <style>
-        body {
-            background-color: #ffcccb;
-            text-align: center;
-            font-family: 'Arial', sans-serif;
-        }
-        h1 {
-            color: #ff69b4;
-            font-size: 3em;
-        }
-        #confetti {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        .heart {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: pink;
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            animation: pop 1.5s infinite;
-        }
-        @keyframes pop {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
-            100% { transform: translateY(0); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Be My Valentine? 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h1 {
+      color: #ff4d6d;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .buttons {
+      position: relative;
+      height: 150px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      position: absolute;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    #yes {
+      background: #ff4d6d;
+      color: white;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+
+    #yes:hover {
+      background: #ff1744;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    #no {
+      background: #ccc;
+      color: #333;
+      right: 30px;
+      bottom: 10px;
+      z-index: 5;
+    }
+
+    #no:hover {
+      background: #bbb;
+    }
+
+    .love {
+      font-size: 24px;
+      color: #ff4d6d;
+      display: none;
+      margin-top: 20px;
+    }
+
+    .emoji-rain {
+      position: fixed;
+      font-size: 30px;
+      pointer-events: none;
+      animation: fall 3s linear forwards;
+      z-index: 1000;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hearts-text {
+      font-size: 50px;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
 </head>
 <body>
-    <h1>Happy Valentine's Day!</h1>
-    <p>Spread Love and Joy!</p>
-    <button onclick="createConfetti()">Celebrate!</button>
-    <div id="confetti"></div>
-    <script>
-        function createConfetti() {
-            const confettiArea = document.getElementById('confetti');
-            for (let i = 0; i < 100; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.top = Math.random() * 100 + 'vh';
-                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                confettiArea.appendChild(heart);
-                setTimeout(() => heart.remove(), 3000);
-            }
-        }
-    </script>
+
+  <div class="card">
+    <h1>Will you be my Valentine? 💘</h1>
+    <p id="mainText">I promise lots of love, laughs, and cuddles 🥰</p>
+
+    <div class="buttons">
+      <button id="yes">YES! 💖</button>
+      <button id="no">No 😅</button>
+    </div>
+
+    <div class="love" id="loveMessage">
+      <div class="hearts-text">💕 YAY!! Best Valentine ever! 💕</div>
+      <p>You just made me the happiest! 😍💕</p>
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const loveMsg = document.getElementById("loveMessage");
+    const card = document.querySelector(".card");
+    let clickCount = 0;
+    let hasClickedYes = false;
+
+    // Array of playful messages for each no click
+    const playfulMessages = [
+      "Are you sure? 🥺",
+      "Really really sure? 💔",
+      "Think again! 😔",
+      "One more chance? 🙏",
+      "You're breaking my heart! 💔",
+      "C'mon, say yes! 😢",
+      "Please? 🥹",
+      "I'll keep asking! 😤",
+      "You can't escape! 😏",
+      "The No button is tired of moving! 😅"
+    ];
+
+    // Make the No button run away on hover
+    noBtn.addEventListener("mouseover", () => {
+      if (hasClickedYes) return; // Stop if yes was clicked
+      
+      const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+      const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+      
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+      
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    });
+
+    // Make the No button run away on click too
+    noBtn.addEventListener("click", () => {
+      if (hasClickedYes) return; // Stop if yes was clicked
+      
+      clickCount++;
+      
+      // Update the main text with playful messages
+      const textEl = document.getElementById("mainText");
+      if (clickCount < playfulMessages.length) {
+        textEl.textContent = playfulMessages[clickCount];
+      } else {
+        textEl.textContent = playfulMessages[playfulMessages.length - 1];
+      }
+      
+      // Make the button run away
+      const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+      const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+      
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+      
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    });
+
+    // Yes button click handler
+    yesBtn.addEventListener("click", () => {
+      hasClickedYes = true;
+      loveMsg.style.display = "block";
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+      
+      // Create emoji rain effect
+      createEmojiRain();
+    });
+
+    // Create falling emojis
+    function createEmojiRain() {
+      const emojis = ['💖', '💕', '💗', '💝', '💓', '💞', '🌹', '✨', '🎉', '🎊'];
+      
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const emoji = document.createElement('div');
+          emoji.className = 'emoji-rain';
+          emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          emoji.style.left = Math.random() * window.innerWidth + 'px';
+          emoji.style.top = '-50px';
+          document.body.appendChild(emoji);
+          
+          setTimeout(() => emoji.remove(), 3000);
+        }, i * 100);
+      }
+    }
+  </script>
+
 </body>
 </html>
